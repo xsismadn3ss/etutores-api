@@ -23,6 +23,6 @@ Ejectuca ``npm install`` para instalar todas las dependencias necesarias del pro
 * ``npx sequleize-cli model:generate``: crear un nuevo modelo
 
     ```bash
-    # Ejemplo de creación de nu nuevo modelo
+    # Ejemplo de creación de un nuevo modelo
     npx sequelize-cli model:generate --name tasks --attributes name:string,done:boolean
     ```
