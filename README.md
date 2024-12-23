@@ -1,5 +1,5 @@
 # E-Tutores API
-Aplicación web dbackend para el proyecto fullstack del **bootcamp google developer**
+Aplicación web backend para el proyecto fullstack del **bootcamp google developer**
 
 Esta API esta orientada a manejar los procesos para la aplicación. El téma del proyecto es crear una aplicación web para una plataforma eductiva orientada a un servicio de tutorias en el que los tutores pueden publicar cursos nuevos y los estudiantes pueden inscribirse a las materias.
 
