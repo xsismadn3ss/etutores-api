@@ -12,11 +12,11 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Persona.belongsTo(models.Sexo, {
-        foreignKey: 'sexo',
-        as: 'sexoInfo'
+        foreignKey: 'id',
+        as: 'sexo'
       });
       Persona.hasMany(models.Inscripcion, {
-        foreignKey: 'personas',
+        foreignKey: 'persona',
         as: 'inscripciones'
       })
     }

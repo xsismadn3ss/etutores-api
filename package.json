@@ -7,19 +7,27 @@
     "type": "github",
     "url": "https://github.com/xsismadn3ss/etutores-api"
   },
-  "keywords": ["api", "node", "express"],
+  "keywords": [
+    "api",
+    "node",
+    "express"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon ./index.js",
-    "prod": "node ./index.js"
+    "prod": "node ./index.js",
+    "migrate": "npx sequelize-cli db:migrate",
+    "undo": "npx sequelize-cli db:migrate:undo"
   },
   "author": "xsismadn3ss & pardo111",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "express-validator": "^7.2.0",
     "mysql": "^2.18.1",
+    "mysql2": "^3.11.5",
     "nodemon": "^3.1.9",
     "sequelize": "^6.37.5",
     "sequelize-cli": "^6.6.2",
