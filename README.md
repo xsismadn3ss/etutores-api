@@ -23,11 +23,9 @@ Comandos personalizados con scripts precargados para ejecutar acciones rapidas e
 * ``npm run undo``: revertir migraciones en la base de datos
 
 ### Sequelize
-* ``npx sequelize init``: iniciar proyecto de sequelize para manejar migraciones
-* ``npx sequelize-cli migration:generate --name {migration_name}``: crear una nueva migración
-* ``npx sequelize-cli db:migrate``: aplicar migraciones en la base de datos
-* ``npx sequelize-cli db:undo``: revertir migraciones en la base de datos
-* ``npx sequleize-cli model:generate``: crear un nuevo modelo
+* ``sequelize init``: iniciar proyecto de sequelize para manejar migraciones
+* ``sequelize migration:generate --name {migration_name}``: crear una nueva migración
+* ``sequleize model:generate``: crear un nuevo modelo
 
     ```bash
     # Ejemplo de creación de un nuevo modelo
