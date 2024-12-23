@@ -16,10 +16,20 @@ module.exports = (sequelize, DataTypes) => {
   Persona.init({
     nombres: DataTypes.STRING,
     apellidos: DataTypes.STRING,
+    usuario: {
+      type: DataTypes.STRING,
+      unique: true
+    },
     fechaNacimiento: DataTypes.DATE,
     sexo: DataTypes.INTEGER,
-    email: DataTypes.STRING,
-    telefono: DataTypes.INTEGER,
+    email: {
+      type: DataTypes.STRING,
+      unique: true
+    },
+    telefono: {
+      type: DataTypes.INTEGER,
+      unique: true
+    },
     activo: {
       type:DataTypes.BOOLEAN,
       defaultValue: true
