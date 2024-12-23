@@ -11,6 +11,10 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Persona.belongsTo(models.Sexo, {
+        foreignKey: 'sexo',
+        as: 'sexoInfo'
+      });
     }
   }
   Persona.init({
@@ -21,7 +25,13 @@ module.exports = (sequelize, DataTypes) => {
       unique: true
     },
     fechaNacimiento: DataTypes.DATE,
-    sexo: DataTypes.INTEGER,
+    sexo: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'Sexo',
+        key: 'id',
+      }
+    },
     email: {
       type: DataTypes.STRING,
       unique: true
@@ -31,7 +41,7 @@ module.exports = (sequelize, DataTypes) => {
       unique: true
     },
     activo: {
-      type:DataTypes.BOOLEAN,
+      type: DataTypes.BOOLEAN,
       defaultValue: true
     }
   }, {
