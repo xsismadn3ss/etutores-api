@@ -11,21 +11,11 @@ module.exports = {
       },
       persona: {
         type: Sequelize.INTEGER,
-        references: {
-          model: 'Persona',
-          key: 'id'
-        },
-        onDelete: 'cascade',
-        onUpdate: 'cascade'
+        allowNull: false
       },
       materia: {
         type: Sequelize.INTEGER,
-        references: {
-          model: 'Materia',
-          key: 'id'
-        },
-        onDelete: 'cascade',
-        onUpdate: 'cascade'
+        allowNull: false
       },
       activo: {
         type: Sequelize.BOOLEAN,
