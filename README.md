@@ -10,13 +10,13 @@ Ejectuca ``npm install`` para instalar todas las dependencias necesarias del pro
 
 Confirgura las variables de entorno en un archivo ``.env`` toma como referencia las variables listadas en ``.example.env``.
 
-Crea un archivo ``config.json`` en la carpeta **config**. toma como referencia el contenido que esta en ``example.config.json`` y configurar las variables para conectarte a tu base de datos (de preferencia las variables que se encuentran en ``development``)
+Crea un archivo ``config.json`` en la carpeta **config**. toma como referencia el contenido que esta en ``example.config.json`` y configura las variables para conectarte a tu base de datos (de preferencia las variables que se encuentran en ``development``)
 
 
 ## Listado de comandos usados en el proyecto
 
 ### Node
-Comandos personalizado con scripts precargados para ejecutar acciones rapidas en el proyecto
+Comandos personalizados con scripts precargados para ejecutar acciones rapidas en el proyecto
 * ``npm run dev``: correr entorno de desarrollo
 * ``npm run prod``: correr entorno de producción
 * `npm run migrate`: aplicar migraciones a la base de datos
