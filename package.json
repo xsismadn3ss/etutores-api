@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "description": "Backend para proyecto Fullstack de Javascript para el bootcamp google developer fullstack javascript",
   "main": "index.js",
+  "repository": {
+    "type": "github",
+    "url": "https://github.com/xsismadn3ss/etutores-api"
+  },
+  "keywords": ["api", "node", "express"],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
