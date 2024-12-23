@@ -24,5 +24,5 @@ Ejectuca ``npm install`` para instalar todas las dependencias necesarias del pro
 
     ```bash
     # Ejemplo de creación de nu nuevo modelo
-    npx sequelize-cli model:generate --name tasks --attributes name:string,description:string,done:boolean,active:boolean
+    npx sequelize-cli model:generate --name tasks --attributes name:string,done:boolean
     ```
