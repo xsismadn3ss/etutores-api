@@ -19,6 +19,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'persona',
         as: 'inscripciones'
       })
+      Persona.hasOne(models.Profesor, {
+        foreignKey: 'persona',
+        as: 'profesor'
+      })
     }
   }
   Persona.init({
