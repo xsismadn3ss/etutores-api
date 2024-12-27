@@ -5,6 +5,7 @@ const envConfig = config[env] || config.development;
 
 const sequelize = new Sequelize(envConfig.database, envConfig.username, envConfig.password, {
     host: envConfig.host,
+    port: envConfig.port,
     dialect: envConfig.dialect,
 });
 
