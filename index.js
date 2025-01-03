@@ -1,5 +1,5 @@
 const app = require('./app')
-const mode = require('./config').env
+const mode = require('./appConfig').env
 
 app.listen(
     app.get('port'), ()=>{
