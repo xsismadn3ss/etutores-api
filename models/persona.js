@@ -23,6 +23,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'persona',
         as: 'profesor'
       })
+      Persona.belongsTo(models.rol, {
+        foreignKey: 'id',
+        as: 'rol'
+      })
     }
   }
   Persona.init({
@@ -40,13 +44,26 @@ module.exports = (sequelize, DataTypes) => {
         key: 'id',
       }
     },
+    rol: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'rol',
+        key: 'id'
+      },
+    },
     email: {
       type: DataTypes.STRING,
-      unique: true
+      unique: true,
+      validate:{
+        isEmail: true
+      }
     },
     telefono: {
       type: DataTypes.INTEGER,
-      unique: true
+      unique: true,
+      validate:{
+        isNumeric: true,
+      }
     },
     activo: {
       type: DataTypes.BOOLEAN,

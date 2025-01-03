@@ -9,16 +9,8 @@ module.exports = {
      * Example:
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
-    await queryInterface.addConstraint('profesors', {
-      fields: ['personaId'],
-      type: 'foreign key',
-      name: 'profesor_persona',
-      references: {
-        table: 'Personas',
-        field: 'id'
-      },
-      onDelete: 'cascade',
-      onUpdate: 'cascade'
+    await queryInterface.addColumn('Personas', 'rols',{
+      type: Sequelize.INTEGER,
     })
   },
 
@@ -29,6 +21,6 @@ module.exports = {
      * Example:
      * await queryInterface.dropTable('users');
      */
-    await queryInterface.removeConstraint('profesors', 'profesor_persona')
+    await queryInterface.removeColumn('Personas', 'rols')
   }
 };
