@@ -53,11 +53,17 @@ module.exports = (sequelize, DataTypes) => {
     },
     email: {
       type: DataTypes.STRING,
-      unique: true
+      unique: true,
+      validate:{
+        isEmail: true
+      }
     },
     telefono: {
       type: DataTypes.INTEGER,
-      unique: true
+      unique: true,
+      validate:{
+        isNumeric: true,
+      }
     },
     activo: {
       type: DataTypes.BOOLEAN,
