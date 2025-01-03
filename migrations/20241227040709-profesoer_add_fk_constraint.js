@@ -29,5 +29,6 @@ module.exports = {
      * Example:
      * await queryInterface.dropTable('users');
      */
+    await queryInterface.removeConstraint('profesors', 'profesor_persona')
   }
 };
