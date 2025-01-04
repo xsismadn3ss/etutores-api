@@ -65,6 +65,14 @@ module.exports = (sequelize, DataTypes) => {
         isNumeric: true,
       }
     },
+    password: {
+      type: DataTypes.STRING,
+      allowNull:false,
+      validate:{
+        len: [8, 10],
+        isAlphanumeric: true
+      }
+    },
     activo: {
       type: DataTypes.BOOLEAN,
       defaultValue: true
