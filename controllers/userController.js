@@ -2,7 +2,10 @@ const { request, response } = require("express");
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/dbConfig");
 const Persona = require("../models/persona")(sequelize, DataTypes);
+const Sexo = require("../models/sexo")(sequelize, DataTypes);
+const Rol = require("../models/sexo")(sequelize, DataTypes);
 const bcrypt = require("bcrypt");
+const jwt = require("../utils/jwt");
 
 async function getUsers(req = request, res = response) {
   try {
@@ -96,7 +99,7 @@ async function updateuser(req = request, res = response) {
   const { id } = req.params;
   const {
     nombres,
-    appellidos,
+    apellidos,
     usuario,
     fechaNacimiento,
     sexo,
@@ -117,7 +120,7 @@ async function updateuser(req = request, res = response) {
     user
       .set({
         nombres,
-        appellidos,
+        apellidos,
         usuario,
         fechaNacimiento,
         sexo,
@@ -151,5 +154,64 @@ async function deleteuser(req = request, res = response) {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Error al eliminar el usuario" });
+  }
+}
+
+async function login(req = request, res = response) {
+  const { usuario, password } = req.body;
+  if (!usuario || !password) {
+    return res.status(400).json({
+      message: "Usuario y contraseña son obligatorios",
+      fields: ["usuario", "password"],
+    });
+  }
+  try {
+    const user = await Persona.findOne({
+      where: {
+        usuario,
+        activo: true,
+      },
+    });
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+    const hashed_password = bcrypt.hashSync(password, 10);
+    if (hashed_password === password) {
+      const responsePayload = {
+        id: user.id,
+        usuario: user.usuario,
+        nombre: `${user.nombres} ${user.apellidos}`,
+      };
+
+      if (user.sexo) {
+        const sexo = await Sexo.findOne({
+          where: {
+            id: user.sexo,
+            activo: true,
+          },
+        });
+        responsePayload.sexo = sexo;
+      }
+      if (user.rol) {
+        const rol = await Rol.findOne({
+          where: {
+            id: user.rol,
+            activo: true,
+          },
+        });
+        responsePayload.rol = rol
+      }
+
+      const accessToken = jwt.generateToken(responsePayload);
+      res.cookie("accessToke", accessToken, {
+        maxAge: 64800,
+        httpOnly: true,
+        path: "/api",
+      });
+      return res.json(responsePayload).status(200);
+    }
+  } catch (err) {
+    console.error(err);
+    res.json({ message: "No se pudo iniciar sesión" }).status(500);
   }
 }
