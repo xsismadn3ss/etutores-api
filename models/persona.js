@@ -12,19 +12,19 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Persona.belongsTo(models.Sexo, {
-        foreignKey: 'id',
-        as: 'sexo'
+        foreignKey: 'sexo',
+        as: 'sexos'
       });
       Persona.hasMany(models.Inscripcion, {
         foreignKey: 'persona',
         as: 'inscripciones'
       })
-      Persona.hasOne(models.Profesor, {
-        foreignKey: 'persona',
+      Persona.hasOne(models.profesor, {
+        foreignKey: 'personaId',
         as: 'profesor'
       })
       Persona.belongsTo(models.rol, {
-        foreignKey: 'id',
+        foreignKey: 'rols',
         as: 'rol'
       })
     }
@@ -44,7 +44,7 @@ module.exports = (sequelize, DataTypes) => {
         key: 'id',
       }
     },
-    rol: {
+    rols: {
       type: DataTypes.INTEGER,
       references: {
         model: 'rol',
@@ -64,6 +64,10 @@ module.exports = (sequelize, DataTypes) => {
       validate:{
         isNumeric: true,
       }
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull:false,
     },
     activo: {
       type: DataTypes.BOOLEAN,

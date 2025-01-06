@@ -1,6 +1,6 @@
 const { request, response } = require("express");
 const sequelize = require("../config/dbConfig");
-const { DataTypes, where } = require("sequelize");
+const { DataTypes } = require("sequelize");
 const Sexo = require("../models/sexo")(sequelize, DataTypes);
 
 async function getSexos(req = request, res = response) {
