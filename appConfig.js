@@ -7,7 +7,7 @@ module.exports = {
     },
     env: process.env.NODE_ENV || 'development',
     jwt: {
-        secret: process.env.SECRET,
+        secret: process.env.SECRET_KEY,
         algorithm: 'HS256',
     }
 }
