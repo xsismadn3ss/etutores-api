@@ -12,10 +12,6 @@ module.exports = {
     await queryInterface.addColumn("Personas", "password", {
       type: Sequelize.STRING,
       allowNull: false,
-      validate: {
-        len: [8, 10],
-        isAlphanumeric: true,
-      },
     });
   },
 
