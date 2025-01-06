@@ -7,7 +7,11 @@ const httpErrorHandler = require('./middlewares/httpError')
 // routers
 const home = require('./routes/home')
 const sexos = require('./routes/sexos')
-const roles = require('./reoutes/roles')
+const roles = require('./routes/roles')
+const usuarios = require('./routes/usuarios')
+const inscripciones = require("./routes/inscripciones")
+const materias = require("./routes/materias")
+const experiencias = require("./routes/experiencias")
 
 const app = express()
 app.set('port', config.app.port)
@@ -18,7 +22,10 @@ app.use(cookieParser())
 app.use('/api', home)
 app.use('/api', sexos)
 app.use('/api', roles)
-// registrar middlewares
+app.use('/api', usuarios)
+app.use("/api", inscripciones);
+app.use("/api", materias);
+app.use('/api', experiencias)
 // registrar middlewares
 app.use(notFoundHandler)
 app.use(httpErrorHandler)
