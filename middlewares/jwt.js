@@ -15,6 +15,4 @@ async function validateToken(req = request, res = response, next) {
   }
 }
 
-module.exports = {
-    validateToken
-}
+module.exports = validateToken
