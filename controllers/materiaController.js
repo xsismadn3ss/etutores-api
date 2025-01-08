@@ -1,8 +1,5 @@
 const { request, response } = require("express");
-// const sequelize = require("../config/dbConfig");
-// const { DataTypes } = require("sequelize");
-// const Materia = require("../models/materia")(sequelize, DataTypes);
-const Materia = require("../models/")
+const { Materia, profesor } = require("../models/");
 
 async function getMaterias(req = request, res = response) {
   try {
@@ -33,12 +30,15 @@ async function getMateria(req = request, res = response) {
 }
 
 async function createMateria(req = request, res = response) {
-  const { nombre, descripcion } = req.body;
-  if (!nombre) {
-    return res.status(400).json({ message: "El campo nombre es obligatorio" });
+  const { nombre, descripcion, profesor } = req.body;
+  if (!nombre || !profesor) {
+    return res.status(400).json({
+      message: "Rellena los cambios que son obligatorios",
+      fields: ["nombre", "profesor"],
+    });
   }
   try {
-    const materia = await Materia.create({ nombre, descripcion });
+    const materia = await Materia.create({ nombre, descripcion, profesor });
     res.status(201).json(materia);
   } catch (err) {
     console.error(err);
@@ -48,7 +48,8 @@ async function createMateria(req = request, res = response) {
 
 async function updateMateria(req = request, res = response) {
   const { id } = req.params;
-  const { nombre, descripcion } = req.body;
+  const { nombre, descripcion, requisitos, inicia, finaliza, inversion } =
+    req.body;
   if (!nombre) {
     return res.status(400).json({ message: "El campo nombre es obligatorio" });
   }
@@ -56,7 +57,11 @@ async function updateMateria(req = request, res = response) {
     const materia = await Materia.findOne({ where: { id, activo: true } });
     if (materia) {
       materia.nombre = nombre;
-      materia.descripcion = descripcion;
+      nombre.descripcion = descripcion;
+      nombre.requisitos = requisitos;
+      nombre.inicia = inicia;
+      nombre.finaliza = finaliza;
+      nombre.inversion = inversion;
       await materia.save();
       res.status(200).json(materia);
     } else {
@@ -85,10 +90,103 @@ async function deleteMateria(req = request, res = response) {
   }
 }
 
+async function getProfesorMaterias(req = request, res = response) {
+  // obtener las materias ligadas a mi usuario
+  const profesor = req.user.profesor;
+  if (!profesor) {
+    return res
+      .status(500)
+      .json({ message: "Tu cuenta no tiene un perfil de tutor" });
+  }
+  try {
+    const materias = await Materia.findAll({
+      where: {
+        activo: true,
+        profesor: profesor.id,
+      },
+    });
+    if (!materias) {
+      res.status(404).json({ message: "no se encontraron resultado" });
+    }
+    res.status(200).json(materias);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "ha ocurrido un error" });
+  }
+}
+
+async function updateProfesorMateria(req = request, res = response) {
+  const profesor = req.user.profesor;
+  const { id } = req.params;
+  const { nombre, descripcion, requisitos, inicia, finaliza } = req.body;
+  if (!profesor) {
+    return res
+      .status(500)
+      .json({ message: "Tu cuenta no tiene un perfil de tutor" });
+  }
+  try {
+    const materia = await Materia.findOne({
+      where: {
+        activo: true,
+        profesor: profesor.id,
+        id: id,
+      },
+    });
+    if (!materia) {
+      return res.status(404).json({ message: "No se encontraron resultados" });
+    }
+    materia.nombre = nombre;
+    materia.descripcion = descripcion;
+    materia.requisitos = requisitos;
+    materia.inicia = inicia;
+    materia.finaliza = finaliza;
+    await materia.save();
+    return res
+      .status(200)
+      .json({ message: "materia actualizada con exito", result: materia });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "" });
+  }
+}
+
+async function deleProfesorMateria(req = request, res = response) {
+  const profesor = req.user.profesor;
+  const { id } = req.params;
+  if (!profesor) {
+    return res
+      .status(400)
+      .json({ message: "Tu cuenta no tiene un perfil de tutor" });
+  }
+  try {
+    const materia = await Materia.findOne({
+      where: {
+        id: id,
+        profesor: profesor.id,
+        activo: true,
+      },
+    });
+    if (!materia) {
+      return res
+        .status(404)
+        .json({ message: "esta materia ya esta eliminada" });
+    }
+    materia.activo = false;
+    await materia.save();
+    return res.status(200).json({ message: "materia eliminada" });
+  } catch (error) {
+    console.error(error);
+    return res.json({ message: "no se pudo eliminar la materia" }).status(500);
+  }
+}
+
 module.exports = {
   getMaterias,
   getMateria,
   createMateria,
   updateMateria,
   deleteMateria,
+  getProfesorMaterias,
+  updateProfesorMateria,
+  deleProfesorMateria
 };
