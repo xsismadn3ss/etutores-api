@@ -229,7 +229,7 @@ async function login(req = request, res = response) {
   try {
     const user = await Persona.findOne({
       where: {
-        id,
+        usuario,
         activo: true,
       },
       include: [
@@ -245,32 +245,36 @@ async function login(req = request, res = response) {
         },
       ],
     });
+
     if (!user) {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
-    const checkPassword = bcrypt.compareSync(password, user.password);
-    if (checkPassword) {
-      const responsePayload = {
-        id: user.id,
-        usuario: user.usuario,
-        nombre: `${user.nombres} ${user.apellidos}`,
-        email: user.email,
-        telefono: user.telefono,
-        rol: user.rol.nombre,
-      };
 
-      const accessToken = jwt.generateToken(responsePayload);
-      res.cookie("accesstoken", accessToken, {
-        maxAge: 64800,
-        httpOnly: true,
-        path: "/api",
-      });
-      return res.json({ message: "has iniciado sesión con exito" }).status(200);
+    const checkPassword = bcrypt.compareSync(password, user.password);
+    if (!checkPassword) {
+      return res.status(401).json({ message: "Contraseña incorrecta" });
     }
-    return res.json({ message: "contraseña incorrecta" }).status(401);
+
+    const responsePayload = {
+      id: user.id,
+      usuario: user.usuario,
+      nombre: `${user.nombres} ${user.apellidos}`,
+      email: user.email,
+      telefono: user.telefono,
+      rol: user.rol ? user.rol.nombre : "sin permisos",
+    };
+
+    const accessToken = jwt.generateToken(responsePayload);
+    res.cookie("accesstoken", accessToken, {
+      maxAge: 64800,
+      httpOnly: true,
+      path: "/api",
+    });
+
+    return res.status(200).json({ message: "Has iniciado sesión con éxito" });
   } catch (err) {
     console.error(err);
-    res.json({ message: "No se pudo iniciar sesión" }).status(500);
+    return res.status(500).json({ message: "No se pudo iniciar sesión" });
   }
 }
 
