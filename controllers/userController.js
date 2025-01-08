@@ -94,14 +94,14 @@ async function getUser(req = request, res = response) {
 }
 
 async function profile(req = request, res = response) {
-  const user = req.user
+  const user = req.user;
   try {
     const persona = await Persona.findOne({
-      where:{
+      where: {
         id: user.id,
         activo: true,
-      }
-    })
+      },
+    });
     attributes: [
       "id",
       "nombres",
@@ -109,15 +109,17 @@ async function profile(req = request, res = response) {
       "usuario",
       "fechaNacimiento",
       "telefono",
-      "email"
-    ]
-    if (!persona){
-      return res.status(404).json({message: "Tu cuenta ya no existe o esta inhabilitada"})
+      "email",
+    ];
+    if (!persona) {
+      return res
+        .status(404)
+        .json({ message: "Tu cuenta ya no existe o esta inhabilitada" });
     }
-    return res.status(200).json(persona).status(200)
+    return res.status(200).json(persona).status(200);
   } catch (error) {
-    console.error(error)
-    return res.status(500).json({message: "Ha ocurrido un error"})
+    console.error(error);
+    return res.status(500).json({ message: "Ha ocurrido un error" });
   }
 }
 
@@ -278,6 +280,53 @@ async function login(req = request, res = response) {
   }
 }
 
+async function updateProfile(req = request, res = response) {
+  const id = req.user.id;
+  try {
+    const user = await Persona.findOne({
+      where: {
+        id,
+        activo: true,
+      },
+    });
+    if (!user) {
+      return res.status(404).json({ message: "No se encontró la cuenta" });
+    }
+    if ("password" in req.body) {
+      req.body[password] = bcrypt.hashSync(password, 10);
+    }
+    user.set(req.body);
+    user.save();
+    res
+      .json({ message: "Perfil actualizado con exito", user: user })
+      .status(200);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al actualizar el perfil" });
+  }
+}
+
+async function deleteAccount(req = request, res = response) {
+  const id = req.user.id;
+  try {
+    const user = await Persona.findOne({
+      where: {
+        id,
+        activo: true,
+      },
+    });
+    if (!user) {
+      return res.status(404).json({ message: "No se encontro el usuario" });
+    }
+    user.activo = false;
+    user.save();
+    res.json({ message: "Usuario eliminado con exito" }).status(200);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error al eliminar el usuario" });
+  }
+}
+
 module.exports = {
   getUsers,
   getUser,
@@ -285,5 +334,7 @@ module.exports = {
   updateUser,
   deleteUser,
   login,
-  profile
+  profile,
+  updateProfile,
+  deleteAccount
 };
