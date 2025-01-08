@@ -28,7 +28,7 @@ app.use("/api", home);
 app.use("/api", sexos);
 app.use("/api", roles);
 app.use("/api", usuarios);
-app.use("/", auth);
+app.use("", auth);
 app.use("/api", inscripciones);
 app.use("/api", materias);
 app.use("/api", experiencias);
