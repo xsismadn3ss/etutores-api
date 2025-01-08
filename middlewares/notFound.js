@@ -1,6 +1,6 @@
 function notFound(req, res, next) {
     res.status(404);
-    const error = new Error(`Not Found - ${req.originalUrl}`);
+    const error = new Error(`Pagina no encontrada - ${req.originalUrl}`);
     error.status = 404
     next(error);
 }
