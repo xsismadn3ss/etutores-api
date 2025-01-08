@@ -93,6 +93,34 @@ async function getUser(req = request, res = response) {
   }
 }
 
+async function profile(req = request, res = response) {
+  const user = req.user
+  try {
+    const persona = await Persona.findOne({
+      where:{
+        id: user.id,
+        activo: true,
+      }
+    })
+    attributes: [
+      "id",
+      "nombres",
+      "apellidos",
+      "usuario",
+      "fechaNacimiento",
+      "telefono",
+      "email"
+    ]
+    if (!persona){
+      return res.status(404).json({message: "Tu cuenta ya no existe o esta inhabilitada"})
+    }
+    return res.status(200).json(persona).status(200)
+  } catch (error) {
+    console.error(error)
+    return res.status(500).json({message: "Ha ocurrido un error"})
+  }
+}
+
 async function createUser(req = request, res = response) {
   const {
     nombres,
@@ -201,9 +229,21 @@ async function login(req = request, res = response) {
   try {
     const user = await Persona.findOne({
       where: {
-        usuario: usuario,
+        id,
         activo: true,
       },
+      include: [
+        {
+          model: Sexo,
+          as: "sexos",
+          attributes: ["nombre"],
+        },
+        {
+          model: rol,
+          as: "rol",
+          attributes: ["nombre"],
+        },
+      ],
     });
     if (!user) {
       return res.status(404).json({ message: "Usuario no encontrado" });
@@ -216,6 +256,7 @@ async function login(req = request, res = response) {
         nombre: `${user.nombres} ${user.apellidos}`,
         email: user.email,
         telefono: user.telefono,
+        rol: user.rol.nombre,
       };
 
       const accessToken = jwt.generateToken(responsePayload);
@@ -224,7 +265,7 @@ async function login(req = request, res = response) {
         httpOnly: true,
         path: "/api",
       });
-        return res.json({message:"has iniciado sesión con exito"}).status(200);
+      return res.json({ message: "has iniciado sesión con exito" }).status(200);
     }
     return res.json({ message: "contraseña incorrecta" }).status(401);
   } catch (err) {
@@ -240,4 +281,5 @@ module.exports = {
   updateUser,
   deleteUser,
   login,
+  profile
 };
