@@ -102,11 +102,11 @@ async function getUser(req = request, res = response) {
 }
 
 async function profile(req = request, res = response) {
-  const usuario = req.user.usuario;
+  const id = req.user.id;
   try {
     const persona = await Persona.findOne({
       where: {
-        usuario,
+        id,
         activo: true,
       },
       attributes: [
@@ -262,12 +262,14 @@ async function login(req = request, res = response) {
         {
           model: Sexo,
           as: "sexos",
-          attributes: ["nombre"],
         },
         {
           model: rol,
           as: "rol",
-          attributes: ["nombre"],
+        },
+        {
+          model: profesor,
+          as: "profesor",
         },
       ],
     });
@@ -288,6 +290,7 @@ async function login(req = request, res = response) {
       email: user.email,
       telefono: user.telefono,
       rol: user.rol ? user.rol.nombre : "sin permisos",
+      profesor: user.profesor ? user.profesor: null
     };
 
     const accessToken = jwt.generateToken(responsePayload);
