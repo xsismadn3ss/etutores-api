@@ -1,11 +1,9 @@
 const { request, response } = require("express");
-const sequelize = require("../config/dbConfig");
-const { DataTypes } = require("sequelize");
-const Rol = require("../models/rol")(sequelize, DataTypes);
+const rol = require('../models')
 
 async function getRoles(req = request, res = response) {
   try {
-    const roles = await Rol.findAll({
+    const roles = await rol.findAll({
       where: {
         activo: true,
       },
@@ -24,7 +22,7 @@ async function getRoles(req = request, res = response) {
 async function getRol(req = request, res = response) {
   try {
     const { id } = req.params;
-    const rol = await Rol.findOne({
+    const rol = await rol.findOne({
       where: {
         id,
         activo: true,
@@ -50,7 +48,7 @@ async function createRol(req = request, res = response) {
     });
   }
   try {
-    const rol = await Rol.create({ nombre, descripcion });
+    const rol = await rol.create({ nombre, descripcion });
     return res.json(rol).status(201);
   } catch (err) {
     console.error(err);
@@ -68,7 +66,7 @@ async function updateRol(req = request, res = response) {
     });
   }
   try {
-    const rol = await Rol.findOne({
+    const rol = await rol.findOne({
       where: {
         id,
         activo: true,
@@ -91,7 +89,7 @@ async function updateRol(req = request, res = response) {
 async function deleteRol(req = request, res = response) {
   const { id } = req.params;
   try {
-    const rol = await Rol.findOne({
+    const rol = await rol.findOne({
       where: {
         id,
         activo: true,
