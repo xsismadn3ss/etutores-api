@@ -1,7 +1,7 @@
 const { request, response } = require("express");
 // const { DataTypes } = require("sequelize");
 // const sequelize = require("../config/dbConfig");
-const { Persona, Sexo, rol } = require("../models");
+const { Persona, Sexo, rol, profesor } = require("../models");
 const bcrypt = require("bcrypt");
 const jwt = require("../utils/jwt");
 
@@ -31,6 +31,10 @@ async function getUsers(req = request, res = response) {
           model: rol,
           as: "rol",
           attributes: ["nombre"],
+        },
+        {
+          model: profesor,
+          as: "profesor",
         },
       ],
     });
@@ -76,6 +80,10 @@ async function getUser(req = request, res = response) {
           as: "rol",
           attributes: ["nombre"],
         },
+        {
+          model: profesor,
+          as: "profesor",
+        },
       ],
     });
     if (persona) {
@@ -94,23 +102,39 @@ async function getUser(req = request, res = response) {
 }
 
 async function profile(req = request, res = response) {
-  const user = req.user;
+  const usuario = req.user.usuario;
   try {
     const persona = await Persona.findOne({
       where: {
-        id: user.id,
+        usuario,
         activo: true,
       },
+      attributes: [
+        "id",
+        "nombres",
+        "apellidos",
+        "usuario",
+        "fechaNacimiento",
+        "telefono",
+        "email",
+      ],
+      include: [
+        {
+          model: Sexo,
+          as: "sexos",
+          attributes: ["nombre"],
+        },
+        {
+          model: rol,
+          as: "rol",
+          attributes: ["nombre"],
+        },
+        {
+          model: profesor,
+          as: "profesor",
+        },
+      ],
     });
-    attributes: [
-      "id",
-      "nombres",
-      "apellidos",
-      "usuario",
-      "fechaNacimiento",
-      "telefono",
-      "email",
-    ];
     if (!persona) {
       return res
         .status(404)
@@ -336,5 +360,5 @@ module.exports = {
   login,
   profile,
   updateProfile,
-  deleteAccount
+  deleteAccount,
 };
