@@ -15,6 +15,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'materia',
         as: 'inscripciones'
       })
+      Materia.belongsTo(models.profesor,{
+        foreignKey:'id',
+        as: "profesor"
+      })
     }
   }
   Materia.init({
@@ -26,6 +30,14 @@ module.exports = (sequelize, DataTypes) => {
     inversion: DataTypes.DOUBLE,
     inicia: DataTypes.DATE,
     finaliza: DataTypes.DATE,
+    profesor:{
+      type: DataTypes.INTEGER,
+      references:{
+        model: 'profesor',
+        key: 'id'
+      },
+      allowNull: false
+    },
     activo: {
       type: DataTypes.BOOLEAN,
       defaultValue: true
