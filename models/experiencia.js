@@ -26,7 +26,13 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       defaultValue:true
     },
-    profesorId: DataTypes.INTEGER
+    profesorId: {
+      type: DataTypes.INTEGER,
+      references:{
+        model: 'profesor',
+        key: 'id'
+      }
+    }
   }, {
     sequelize,
     modelName: 'experiencia',
