@@ -1,11 +1,13 @@
 const express = require("express");
-const router = express.Router();
 const sexoController = require("../controllers/sexoController");
+const validatePermissions = require('../middlewares/rolHandler')
 
-router.get("/sexos/", sexoController.getSexos);
-router.get("/sexos/:id", sexoController.getSexo);
-router.post("/sexos/", sexoController.createSexo);
-router.put("/sexos/:id", sexoController.updateSexo);
-router.delete("/sexos/:id", sexoController.deleteSexo);
+const router = express.Router();
+
+router.get("/sexos/",validatePermissions(['administrador']), sexoController.getSexos);
+router.get("/sexos/:id",validatePermissions(['administrador']), sexoController.getSexo);
+router.post("/sexos/",validatePermissions(['administrador']), sexoController.createSexo);
+router.put("/sexos/:id",validatePermissions(['administrador']), sexoController.updateSexo);
+router.delete("/sexos/:id",validatePermissions(['administrador']), sexoController.deleteSexo);
 
 module.exports = router;
