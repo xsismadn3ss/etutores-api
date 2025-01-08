@@ -1,15 +1,18 @@
 const { request, response } = require("express");
 
-function validatePermissions(requiredPermission) {
+function validatePermissions(requiredPermissions) {
   return (req=request, res=response, next) => {
-    const userPermission = req.user.rol;
+    const userPermissions = req.user.rol;
+    const hasPermission = requiredPermissions.every((permission) =>
+      userPermissions.includes(permission)
+    );
 
-    if (!userPermission || userPermission != requiredPermission){
+    if (!hasPermission){
         return res.status(403).json({
             message: "No tienes permisos suficientes"
         })
     }
-    return next()
+    next()
   };
 }
 
