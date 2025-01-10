@@ -244,6 +244,27 @@ async function deleteProfesorExperience(req = request, res = response) {
   }
 }
 
+async function getExperienciaByProfesorId(req = request, res = response) {
+  const { profesor } = req.query;
+  try {
+    const experiencias = await experiencia.findAll({
+      where: {
+        activo: true,
+        profesorId: profesor,
+      },
+    });
+    if (!experiencias)
+      return res
+        .status(404)
+        .json({ message: "Este profesor no tiene experiencias agregadas" });
+    return res.status(200).json(experiencias);
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "No se pudo obtener la experiencia de este profesor" });
+  }
+}
+
 module.exports = {
   getExperiencias,
   getExperiencia,
@@ -254,5 +275,6 @@ module.exports = {
   createProfesorExperience,
   updateProfesorExperience,
   deleteExperiencia,
-  deleteProfesorExperience
+  deleteProfesorExperience,
+  getExperienciaByProfesorId
 };
