@@ -179,7 +179,7 @@ async function createUser(req = request, res = response) {
     });
   }
   try {
-    const persona = await Persona.create({
+    const user = await Persona.create({
       nombres,
       apellidos,
       usuario,
@@ -189,7 +189,7 @@ async function createUser(req = request, res = response) {
       telefono,
       password: bcrypt.hashSync(password, 10),
     });
-    persona.save();
+    user.save();
     return res.json({ message: "Cuenta creada con exito" }).status(201);
   } catch (err) {
     console.error(err);
@@ -290,15 +290,16 @@ async function login(req = request, res = response) {
       email: user.email,
       telefono: user.telefono,
       rol: user.rol ? user.rol.nombre : "sin permisos",
-      profesor: user.profesor ? user.profesor: null
+      profesor: user.profesor ? user.profesor : null,
     };
 
     const accessToken = jwt.generateToken(responsePayload);
-    res.cookie("accesstoken", accessToken, {
+    res.cookie("access-token", accessToken, {
       maxAge: 64800,
       httpOnly: true,
       path: "/api",
     });
+    res.setHeader("access-token", accessToken);
 
     return res.status(200).json({ message: "Has iniciado sesión con éxito" });
   } catch (err) {
