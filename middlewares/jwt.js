@@ -2,7 +2,12 @@ const { request, response } = require("express");
 const jwt = require("../utils/jwt");
 
 async function validateToken(req = request, res = response, next) {
-  const token = req.cookies["accesstoken"] || req.headers["accesstoken"];
+  const url = request.url;
+  if ("/login" in url || "/register" in url) {
+    await next();
+  }
+
+  const token = req.cookies["access-token"] || req.headers["access-token"];
   if (token == null)
     return res.status(401).json({ message: "No estas autenticado" });
   try {
@@ -15,4 +20,4 @@ async function validateToken(req = request, res = response, next) {
   }
 }
 
-module.exports = validateToken
+module.exports = validateToken;
