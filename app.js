@@ -14,6 +14,7 @@ const auth = require("./routes/auth");
 const inscripciones = require("./routes/inscripciones");
 const materias = require("./routes/materias");
 const experiencias = require("./routes/experiencias");
+const profesores = require('./routes/profesores')
 
 const app = express();
 app.set("port", config.app.port);
@@ -24,14 +25,16 @@ app.use(cookieParser());
 app.use("/api", validateToken);
 
 // registrar rutas
-app.use("/api", home);
-app.use("/api", sexos);
-app.use("/api", roles);
-app.use("/api", usuarios);
-app.use("", auth);
-app.use("/api", inscripciones);
-app.use("/api", materias);
-app.use("/api", experiencias);
+const base = config.app.base
+app.use(base, home);
+app.use(base, sexos);
+app.use(base, roles);
+app.use(base, usuarios);
+app.use(base, auth);
+app.use(base, inscripciones);
+app.use(base, materias);
+app.use(base, experiencias);
+app.use(base, profesores)
 
 // registrar middlewares
 app.use(notFoundHandler);
