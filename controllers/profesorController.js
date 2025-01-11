@@ -1,5 +1,5 @@
 const { request, response } = require("express");
-const { profesor } = require("../models");
+const { profesor, Materia } = require("../models");
 
 async function getProfesores(req = request, res = response) {
   try {
@@ -21,6 +21,22 @@ async function getProfesor(req = requeset, res = response) {
     }
     const p = await profesor.findOne({
       where: { personaId: id, activo: true },
+      attributes: ["id", "titulo", "especialidad", "biografia"],
+      include: [
+        {
+          model: Materia,
+          as: "materias",
+          attributes: [
+            "id",
+            "nombre",
+            "titulo",
+            "requisitos",
+            "inversion",
+            "inicia",
+            "finaliza",
+          ],
+        },
+      ],
     });
     if (p) {
       res.status(200).json(p);
@@ -47,7 +63,7 @@ async function getProfesorSelf(req = request, res = response) {
     if (!p.activo) {
       return res
         .status(200)
-        .json({ message: "El perfil de tutor esta deshabilitado", data:p });
+        .json({ message: "El perfil de tutor esta deshabilitado", data: p });
     }
     return res.status(200).json(p);
   } catch (error) {
