@@ -4,50 +4,52 @@ const { profesor } = require("../models");
 async function getProfesores(req = request, res = response) {
   try {
     const profesores = await profesor.findAll({ where: { activo: true } });
-    if (Profesores.lengeth === 0) {
+    if (profesores.lengeth === 0) {
       return res.status(404).json({ message: "No se encontro resultado" });
     }
-    res.status(200).json(Profesores);
+    res.status(200).json(profesores);
   } catch (error) {
-    console.error(err);
     res.status(500).json({ message: "Error al obtener las materias" });
   }
 }
 
 async function getProfesor(req = requeset, res = response) {
   try {
-    const { id } = req.params;
-    const profesor = await profesor.findOne({ where: { id, activo: true } });
-    if (profesor) {
-      res.status(200).json(profesor);
+    const { id } = req.query;
+    if (!id) {
+      return res.redirect(301, "/api/profesores/all");
+    }
+    const p = await profesor.findOne({
+      where: { personaId: id, activo: true },
+    });
+    if (p) {
+      res.status(200).json(p);
     } else {
-      res.status(400).json({ message: "No se encontro resultado" });
+      res.status(400).json({ message: "No se encontraron resultados" });
     }
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Error al obtener los profesores" });
+    res.status(500).json({ message: "Error al buscar el profesor" });
   }
 }
 
 async function getProfesorSelf(req = request, res = response) {
-  const { id } = req.user;
   try {
-    const profesor = profesor.findOne({
-      where: {
-        id,
-      },
+    const { id } = req.user;
+    const p = await profesor.findOne({
+      where: { personaId: id },
     });
-    if (!profesor) {
-      return res.status(404).json({ message: "No tienes perfil de tutor" });
+    if (!p) {
+      return res
+        .status(404)
+        .json({ message: "Aun no tienes un perfil de tutor" });
     }
-    if (!profesor.activo) {
+    if (!p.activo) {
       return res
         .status(200)
-        .json({ message: "El perfil de tutor esta deshabilitado" });
+        .json({ message: "El perfil de tutor esta deshabilitado", data:p });
     }
-    return res
-      .status(200)
-      .json({ message: "perfil encontrado", profesor: profesor });
+    return res.status(200).json(p);
   } catch (error) {
     return res
       .status(500)
@@ -65,16 +67,16 @@ async function createProfesor(req = requeset, res = response) {
     });
   }
   try {
-    const profesor = await profesor.create({
+    const p = await profesor.create({
       titulo,
       especialidad,
       biografia,
       personaId: user.id,
     });
-    res.status(201).json(profesor);
+    res.status(201).json({ message: "creado con exito" });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Error al crear la materia" });
+    res.status(500).json({ message: "Error al crear el perfil de tutor" });
   }
 }
 
