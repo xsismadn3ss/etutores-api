@@ -1,13 +1,10 @@
 const { request, response } = require("express");
-// const { DataTypes } = require("sequelize");
-// const sequelize = require("../config/dbConfig");
 const { Persona, Sexo, rol, profesor } = require("../models");
 const bcrypt = require("bcrypt");
 const jwt = require("../utils/jwt");
 
 async function getUsers(req = request, res = response) {
   try {
-    console.log(Persona.associations);
     const personas = await Persona.findAll({
       where: {
         activo: true,
@@ -24,7 +21,7 @@ async function getUsers(req = request, res = response) {
       include: [
         {
           model: Sexo,
-          as: "sexos",
+          as: "genero",
           attributes: ["nombre"],
         },
         {
@@ -35,6 +32,7 @@ async function getUsers(req = request, res = response) {
         {
           model: profesor,
           as: "profesor",
+          attributes: ["titulo", "especialidad", "biografia"],
         },
       ],
     });
@@ -72,7 +70,7 @@ async function getUser(req = request, res = response) {
       include: [
         {
           model: Sexo,
-          as: "sexos",
+          as: "genero",
           attributes: ["nombre"],
         },
         {
@@ -83,6 +81,7 @@ async function getUser(req = request, res = response) {
         {
           model: profesor,
           as: "profesor",
+          attributes: ["titulo", "especialidad", "biografia"],
         },
       ],
     });
@@ -93,6 +92,7 @@ async function getUser(req = request, res = response) {
       message: "Esta cuenta no existe",
     });
   } catch (error) {
+    console.log(error)
     return res
       .json({
         message: "Error al obtener los datos",
@@ -104,43 +104,7 @@ async function getUser(req = request, res = response) {
 async function profile(req = request, res = response) {
   const id = req.user.id;
   try {
-    const persona = await Persona.findOne({
-      where: {
-        id,
-        activo: true,
-      },
-      attributes: [
-        "id",
-        "nombres",
-        "apellidos",
-        "usuario",
-        "fechaNacimiento",
-        "telefono",
-        "email",
-      ],
-      include: [
-        {
-          model: Sexo,
-          as: "sexos",
-          attributes: ["nombre"],
-        },
-        {
-          model: rol,
-          as: "rol",
-          attributes: ["nombre"],
-        },
-        {
-          model: profesor,
-          as: "profesor",
-        },
-      ],
-    });
-    if (!persona) {
-      return res
-        .status(404)
-        .json({ message: "Tu cuenta ya no existe o esta inhabilitada" });
-    }
-    return res.status(200).json(persona).status(200);
+    return res.redirect(301, `/api/users/${id}`)
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Ha ocurrido un error" });
