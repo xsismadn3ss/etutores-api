@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
       })
       Materia.belongsTo(models.profesor,{
         foreignKey:'id',
-        as: "profesores"
+        as: "owner"
       })
     }
   }
@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
     nombre: DataTypes.STRING,
     codigo: DataTypes.STRING,
     accesibilidad: DataTypes.STRING,
-    titulo: DataTypes.STRING,
+    descripcion: DataTypes.STRING,
     requisitos: DataTypes.STRING,
     inversion: DataTypes.DOUBLE,
     inicia: DataTypes.DATE,
