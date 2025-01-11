@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
       })
       Materia.belongsTo(models.profesor,{
         foreignKey:'id',
-        as: "profesor"
+        as: "profesores"
       })
     }
   }
