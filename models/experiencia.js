@@ -22,11 +22,18 @@ module.exports = (sequelize, DataTypes) => {
     fecha_final: DataTypes.DATEONLY,
     lugar: DataTypes.STRING,
     titulo: DataTypes.STRING,
+    descripcion: DataTypes.STRING,
     activo: {
       type: DataTypes.BOOLEAN,
       defaultValue:true
     },
-    profesorId: DataTypes.INTEGER
+    profesorId: {
+      type: DataTypes.INTEGER,
+      references:{
+        model: 'profesor',
+        key: 'id'
+      }
+    }
   }, {
     sequelize,
     modelName: 'experiencia',

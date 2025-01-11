@@ -15,17 +15,29 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'materia',
         as: 'inscripciones'
       })
+      Materia.belongsTo(models.profesor,{
+        foreignKey:'id',
+        as: "owner"
+      })
     }
   }
   Materia.init({
     nombre: DataTypes.STRING,
     codigo: DataTypes.STRING,
     accesibilidad: DataTypes.STRING,
-    titulo: DataTypes.STRING,
+    descripcion: DataTypes.STRING,
     requisitos: DataTypes.STRING,
     inversion: DataTypes.DOUBLE,
     inicia: DataTypes.DATE,
     finaliza: DataTypes.DATE,
+    profesor:{
+      type: DataTypes.INTEGER,
+      references:{
+        model: 'profesor',
+        key: 'id'
+      },
+      allowNull: false
+    },
     activo: {
       type: DataTypes.BOOLEAN,
       defaultValue: true

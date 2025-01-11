@@ -1,13 +1,10 @@
 const { request, response } = require("express");
-// const { DataTypes } = require("sequelize");
-// const sequelize = require("../config/dbConfig");
-const { Persona, Sexo, rol } = require("../models");
+const { Persona, Sexo, rol, profesor } = require("../models");
 const bcrypt = require("bcrypt");
 const jwt = require("../utils/jwt");
 
 async function getUsers(req = request, res = response) {
   try {
-    console.log(Persona.associations);
     const personas = await Persona.findAll({
       where: {
         activo: true,
@@ -24,13 +21,18 @@ async function getUsers(req = request, res = response) {
       include: [
         {
           model: Sexo,
-          as: "sexos",
+          as: "genero",
           attributes: ["nombre"],
         },
         {
           model: rol,
           as: "rol",
           attributes: ["nombre"],
+        },
+        {
+          model: profesor,
+          as: "profesor",
+          attributes: ["titulo", "especialidad", "biografia"],
         },
       ],
     });
@@ -68,13 +70,18 @@ async function getUser(req = request, res = response) {
       include: [
         {
           model: Sexo,
-          as: "sexos",
+          as: "genero",
           attributes: ["nombre"],
         },
         {
           model: rol,
           as: "rol",
           attributes: ["nombre"],
+        },
+        {
+          model: profesor,
+          as: "profesor",
+          attributes: ["titulo", "especialidad", "biografia"],
         },
       ],
     });
@@ -85,11 +92,22 @@ async function getUser(req = request, res = response) {
       message: "Esta cuenta no existe",
     });
   } catch (error) {
+    console.log(error);
     return res
       .json({
         message: "Error al obtener los datos",
       })
       .status(500);
+  }
+}
+
+async function profile(req = request, res = response) {
+  const id = req.user.id;
+  try {
+    return res.redirect(301, `/api/users/${id}`);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Ha ocurrido un error" });
   }
 }
 
@@ -125,7 +143,7 @@ async function createUser(req = request, res = response) {
     });
   }
   try {
-    const persona = await Persona.create({
+    const user = await Persona.create({
       nombres,
       apellidos,
       usuario,
@@ -135,7 +153,7 @@ async function createUser(req = request, res = response) {
       telefono,
       password: bcrypt.hashSync(password, 10),
     });
-    persona.save();
+    user.save();
     return res.json({ message: "Cuenta creada con exito" }).status(201);
   } catch (err) {
     console.error(err);
@@ -201,35 +219,103 @@ async function login(req = request, res = response) {
   try {
     const user = await Persona.findOne({
       where: {
-        usuario: usuario,
+        usuario,
+        activo: true,
+      },
+      include: [
+        {
+          model: Sexo,
+          as: "genero",
+        },
+        {
+          model: rol,
+          as: "rol",
+        },
+        {
+          model: profesor,
+          as: "profesor",
+        },
+      ],
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    const checkPassword = bcrypt.compareSync(password, user.password);
+    if (!checkPassword) {
+      return res.status(401).json({ message: "Contraseña incorrecta" });
+    }
+
+    const responsePayload = {
+      id: user.id,
+      usuario: user.usuario,
+      nombre: `${user.nombres} ${user.apellidos}`,
+      email: user.email,
+      telefono: user.telefono,
+      rol: user.rol ? user.rol.nombre : "sin permisos",
+      profesor: user.profesor ? user.profesor : null,
+    };
+
+    const accessToken = jwt.generateToken(responsePayload);
+    res.cookie("access-token", accessToken, {
+      maxAge: 64800,
+      httpOnly: true,
+      path: "/api",
+    });
+    res.setHeader("access-token", accessToken);
+
+    return res.status(200).json({ message: "Has iniciado sesión con éxito" });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "No se pudo iniciar sesión" });
+  }
+}
+
+async function updateProfile(req = request, res = response) {
+  const id = req.user.id;
+  try {
+    const user = await Persona.findOne({
+      where: {
+        id,
         activo: true,
       },
     });
     if (!user) {
-      return res.status(404).json({ message: "Usuario no encontrado" });
+      return res.status(404).json({ message: "No se encontró la cuenta" });
     }
-    const checkPassword = bcrypt.compareSync(password, user.password);
-    if (checkPassword) {
-      const responsePayload = {
-        id: user.id,
-        usuario: user.usuario,
-        nombre: `${user.nombres} ${user.apellidos}`,
-        email: user.email,
-        telefono: user.telefono,
-      };
+    if ("password" in req.body) {
+      req.body[password] = bcrypt.hashSync(password, 10);
+    }
+    user.set(req.body);
+    user.save();
+    res
+      .json({ message: "Perfil actualizado con exito", user: user })
+      .status(200);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al actualizar el perfil" });
+  }
+}
 
-      const accessToken = jwt.generateToken(responsePayload);
-      res.cookie("accesstoken", accessToken, {
-        maxAge: 64800,
-        httpOnly: true,
-        path: "/api",
-      });
-        return res.json({message:"has iniciado sesión con exito"}).status(200);
+async function deleteAccount(req = request, res = response) {
+  const id = req.user.id;
+  try {
+    const user = await Persona.findOne({
+      where: {
+        id,
+        activo: true,
+      },
+    });
+    if (!user) {
+      return res.status(404).json({ message: "No se encontro el usuario" });
     }
-    return res.json({ message: "contraseña incorrecta" }).status(401);
+    user.activo = false;
+    user.save();
+    res.json({ message: "Usuario eliminado con exito" }).status(200);
   } catch (err) {
     console.error(err);
-    res.json({ message: "No se pudo iniciar sesión" }).status(500);
+    res.status(500).json({ message: "Error al eliminar el usuario" });
   }
 }
 
@@ -240,4 +326,7 @@ module.exports = {
   updateUser,
   deleteUser,
   login,
+  profile,
+  updateProfile,
+  deleteAccount,
 };
