@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 const notFoundHandler = require("./middlewares/notFound");
 const httpErrorHandler = require("./middlewares/httpError");
 const validateToken = require("./middlewares/jwt");
+const logger = require("./middlewares/logger");
 // routers
 const home = require("./routes/home");
 const sexos = require("./routes/sexos");
@@ -14,18 +15,20 @@ const auth = require("./routes/auth");
 const inscripciones = require("./routes/inscripciones");
 const materias = require("./routes/materias");
 const experiencias = require("./routes/experiencias");
-const profesores = require('./routes/profesores')
+const profesores = require("./routes/profesores");
 
 const app = express();
 app.set("port", config.app.port);
 app.use(express.json());
 app.use(cookieParser());
 
+// middleware para añadir logs de las endpoints
+app.use(logger);
 // añadir autenticaciones
 app.use("/api", validateToken);
 
 // registrar rutas
-const base = config.app.base
+const base = config.app.base;
 app.use(base, home);
 app.use(base, sexos);
 app.use(base, roles);
@@ -34,7 +37,7 @@ app.use(base, auth);
 app.use(base, inscripciones);
 app.use(base, materias);
 app.use(base, experiencias);
-app.use(base, profesores)
+app.use(base, profesores);
 
 // registrar middlewares
 app.use(notFoundHandler);
