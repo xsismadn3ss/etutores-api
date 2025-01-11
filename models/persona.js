@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Persona.belongsTo(models.Sexo, {
         foreignKey: 'sexo',
-        as: 'sexos'
+        as: 'genero'
       });
       Persona.hasMany(models.Inscripcion, {
         foreignKey: 'persona',
