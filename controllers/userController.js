@@ -92,7 +92,7 @@ async function getUser(req = request, res = response) {
       message: "Esta cuenta no existe",
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return res
       .json({
         message: "Error al obtener los datos",
@@ -104,7 +104,7 @@ async function getUser(req = request, res = response) {
 async function profile(req = request, res = response) {
   const id = req.user.id;
   try {
-    return res.redirect(301, `/api/users/${id}`)
+    return res.redirect(301, `/api/users/${id}`);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Ha ocurrido un error" });
@@ -225,7 +225,7 @@ async function login(req = request, res = response) {
       include: [
         {
           model: Sexo,
-          as: "sexos",
+          as: "genero",
         },
         {
           model: rol,
