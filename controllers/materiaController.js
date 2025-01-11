@@ -1,9 +1,34 @@
 const { request, response } = require("express");
-const { Materia, profesor } = require("../models/");
+const { Materia, profesor, Persona } = require("../models/");
 
 async function getMaterias(req = request, res = response) {
   try {
-    const materias = await Materia.findAll({ where: { activo: true } });
+    const materias = await Materia.findAll({
+      where: { activo: true },
+      attributes: [
+        "id",
+        "nombre",
+        "descripcion",
+        "requisitos",
+        "inversion",
+        "inicia",
+        "finaliza",
+      ],
+      include: [
+        {
+          model: profesor,
+          as: "owner",
+          attributes: ["id", "titulo", "especialidad", "biografia"],
+          include: [
+            {
+              model: Persona,
+              as: "persona",
+              attributes: ["id", "nombres", "apellidos", "usuario", "email"],
+            },
+          ],
+        },
+      ],
+    });
     if (materias.length === 0) {
       return res.status(404).json({ message: "No se encontraron resultados" });
     }
@@ -15,13 +40,21 @@ async function getMaterias(req = request, res = response) {
 }
 
 async function getMateria(req = request, res = response) {
+  console.log(req.query);
   try {
-    const { id } = req.params;
-    const materia = await Materia.findOne({ where: { id, activo: true } });
-    if (materia) {
-      res.status(200).json(materia);
+    const { profesor, id } = req.query;
+    if (!profesor && !id) {
+      return res.redirect("/api/materias/all");
+    }
+    if (profesor) {
+      return res.redirect(`/api/profesores?id=${profesor}`);
     } else {
-      res.status(404).json({ message: "No se encontraron resultados" });
+      const materia = await Materia.findOne({ where: { id, activo: true } });
+      if (materia) {
+        res.status(200).json(materia);
+      } else {
+        res.status(404).json({ message: "No se encontraron resultados" });
+      }
     }
   } catch (err) {
     console.error(err);
@@ -30,15 +63,25 @@ async function getMateria(req = request, res = response) {
 }
 
 async function createMateria(req = request, res = response) {
-  const { nombre, descripcion, profesor } = req.body;
-  if (!nombre || !profesor) {
+  console.log(req.user);
+  const { profesor } = req.user;
+  const { nombre, descripcion } = req.body;
+  if (!profesor.id)
+    return res
+      .status(400)
+      .json({ message: "Tu cuenta no tiene un perfil de tutor" });
+  if (!nombre) {
     return res.status(400).json({
       message: "Rellena los cambios que son obligatorios",
-      fields: ["nombre", "profesor"],
+      fields: ["nombre"],
     });
   }
   try {
-    const materia = await Materia.create({ nombre, descripcion, profesor });
+    const materia = await Materia.create({
+      nombre,
+      descripcion,
+      profesor: profesor.id,
+    });
     res.status(201).json(materia);
   } catch (err) {
     console.error(err);
@@ -118,7 +161,8 @@ async function getProfesorMaterias(req = request, res = response) {
 async function updateProfesorMateria(req = request, res = response) {
   const profesor = req.user.profesor;
   const { id } = req.params;
-  const { nombre, descripcion, requisitos, inicia, finaliza } = req.body;
+  const { nombre, descripcion, requisitos, inicia, finaliza, inversion } =
+    req.body;
   if (!profesor) {
     return res
       .status(500)
@@ -188,5 +232,5 @@ module.exports = {
   deleteMateria,
   getProfesorMaterias,
   updateProfesorMateria,
-  deleProfesorMateria
+  deleProfesorMateria,
 };
