@@ -10,9 +10,11 @@ const {
 } = require("../controllers/profesorController");
 const rolAccess = require('../middlewares/rolHandler')
 
-router.get('/profesores', getProfesores)
-router.get('/profesores/:id', getProfesor)
-router.get('/profesores/self', getProfesorSelf)
+router.get('/profesores/all', getProfesores)
+router.get('/profesores', getProfesor)
+router.get('/profesores/self', rolAccess(['profesor', 'administrador']), getProfesorSelf)
 router.post('/profesores',rolAccess(['profesor', 'administrador']), createProfesor)
 router.put('/profesores', rolAccess(['profesor', 'administrador']), updateProfesores)
 router.put('/profesores', rolAccess(['profesor', 'administrador']), deleteProfesor)
+
+module.exports = router
