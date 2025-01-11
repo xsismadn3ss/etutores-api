@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get("/users/", userController.getUsers);
 router.get("/users/:id", userController.getUser);
-router.put("/users/:id", userController.updateUser);
+router.put("/users/:id", validatePermission(['administrador']), userController.updateUser);
 router.delete('/users/:id', validatePermission(['administrador']),userController.deleteUser);
 router.get('/profile/', userController.profile)
 router.put('/profile/', userController.updateProfile)
