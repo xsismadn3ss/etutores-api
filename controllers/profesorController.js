@@ -1,9 +1,42 @@
 const { request, response } = require("express");
-const { profesor, Materia } = require("../models");
+const { profesor, Materia, Persona } = require("../models");
 
 async function getProfesores(req = request, res = response) {
   try {
-    const profesores = await profesor.findAll({ where: { activo: true } });
+    const profesores = await profesor.findAll({
+      where: { activo: true },
+      attributes: ["id", "titulo", "especialidad", "biografia"],
+      include: [
+        {
+          model: Materia,
+          as: "materias",
+          attributes: [
+            "id",
+            "nombre",
+            "titulo",
+            "requisitos",
+            "inversion",
+            "inicia",
+            "finaliza",
+          ],
+        },
+        {
+          model: Persona,
+          as: "persona",
+          attributes: [
+            "id",
+            "nombres",
+            "apellidos",
+            "usuario",
+            "fechaNacimiento",
+            "sexo",
+            "rols",
+            "email",
+            "telefono",
+          ],
+        },
+      ],
+    });
     if (profesores.lengeth === 0) {
       return res.status(404).json({ message: "No se encontro resultado" });
     }
@@ -34,6 +67,21 @@ async function getProfesor(req = requeset, res = response) {
             "inversion",
             "inicia",
             "finaliza",
+          ],
+        },
+        {
+          model: Persona,
+          as: "persona",
+          attributes: [
+            "id",
+            "nombres",
+            "apellidos",
+            "usuario",
+            "fechaNacimiento",
+            "sexo",
+            "rols",
+            "email",
+            "telefono",
           ],
         },
       ],
