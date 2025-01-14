@@ -17,6 +17,6 @@ router.delete("/experiencia/:id",validatePermissions(['administrador']), experie
 router.get('/profesor/experiencias/', validatePermissions(['profesor', 'administrador']), experienciaController.getProfesorExperience)
 router.post('/profesor/experiencias/', validatePermissions(['profesor', 'administrador']), experienciaController.createProfesorExperience)
 router.put('/profesor/experiencias/:id', validatePermissions(['profesor', 'administrador']), experienciaController.updateProfesorExperience)
-router.put('/profesor/experiencias/:id', validatePermissions(['profesor', 'administrador']), experienciaController.deleteProfesorExperience)
+router.delete('/profesor/experiencias/:id', validatePermissions(['profesor', 'administrador']), experienciaController.deleteProfesorExperience)
 
 module.exports = router;
