@@ -1,5 +1,5 @@
 const { request, response } = require("express");
-const { Persona, Sexo, rol, profesor } = require("../models");
+const { Persona, Sexo, rol, profesor, experiencia } = require("../models");
 const bcrypt = require("bcrypt");
 const jwt = require("../utils/jwt");
 
@@ -22,17 +22,26 @@ async function getUsers(req = request, res = response) {
         {
           model: Sexo,
           as: "genero",
-          attributes: ["nombre"],
+          attributes: ["id","nombre"],
         },
         {
           model: rol,
           as: "rol",
-          attributes: ["nombre"],
+          attributes: ["id","nombre"],
         },
         {
           model: profesor,
           as: "profesor",
-          attributes: ["titulo", "especialidad", "biografia"],
+          attributes: ["id","titulo", "especialidad", "biografia"],
+          include:[
+            {
+              model: experiencia,
+              as: "experiencias",
+              attributes: [
+                "id","titulo", "lugar", "descripcion"
+              ]
+            }
+          ]
         },
       ],
     });
