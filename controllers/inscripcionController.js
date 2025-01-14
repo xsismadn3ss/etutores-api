@@ -127,19 +127,17 @@ async function getInscripcion(req = request, res = response) {
   }
 }
 async function createInscripcion(req = request, res = response) {
-  const {id} = req.user
-  const { estudianteId, materiaId, fecha } = req.body;
-  if (!estudianteId || !materiaId || !fecha) {
+  const { id } = req.user;
+  const { materia } = req.body;
+  if (!materia || !id) {
     return res
       .status(400)
       .json({ message: "Todos los campos son obligatorios" });
   }
   try {
     const inscripcion = await Inscripcion.create({
-      estudianteId,
-      materiaId,
-      fecha,
-      persona: id
+      materia,
+      persona: id,
     });
     res.status(201).json(inscripcion);
   } catch (err) {
@@ -150,9 +148,9 @@ async function createInscripcion(req = request, res = response) {
 
 async function updateInscripcion(req = request, res = response) {
   const { id } = req.params;
-  const persona = req.user.id
-  const { estudianteId, materiaId, fecha } = req.body;
-  if (!estudianteId || !materiaId || !fecha) {
+  const persona = req.user.id;
+  const { materia } = req.body;
+  if (!materia || !id) {
     return res
       .status(400)
       .json({ message: "Todos los campos son obligatorios" });
@@ -162,9 +160,8 @@ async function updateInscripcion(req = request, res = response) {
       where: { id, activo: true, persona },
     });
     if (inscripcion) {
-      inscripcion.estudianteId = estudianteId;
-      inscripcion.materiaId = materiaId;
-      inscripcion.fecha = fecha;
+      inscripcion.persona = id;
+      inscripcion.materia = materia;
       await inscripcion.save();
       res.status(200).json(inscripcion);
     } else {
@@ -178,7 +175,7 @@ async function updateInscripcion(req = request, res = response) {
 
 async function deleteInscripcion(req = request, res = response) {
   const { id } = req.params;
-  const persona = req.user.id
+  const persona = req.user.id;
   try {
     const inscripcion = await Inscripcion.findOne({
       where: { id, activo: true, persona },

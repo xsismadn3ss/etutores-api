@@ -49,7 +49,23 @@ async function getMateria(req = request, res = response) {
     if (profesor) {
       return res.redirect(`/api/profesores?id=${profesor}`);
     } else {
-      const materia = await Materia.findOne({ where: { id, activo: true } });
+      const materia = await Materia.findOne({
+        where: { id, activo: true },
+        include: [
+          {
+            model: profesor,
+            as: "owner",
+            attributes: ["id", "titulo", "especialidad", "biografia"],
+            include: [
+              {
+                model: Persona,
+                as: "persona",
+                attributes: ["id", "nombres", "apellidos", "usuario", "email"],
+              },
+            ],
+          },
+        ],
+      });
       if (materia) {
         res.status(200).json(materia);
       } else {
@@ -65,7 +81,8 @@ async function getMateria(req = request, res = response) {
 async function createMateria(req = request, res = response) {
   console.log(req.user);
   const { profesor } = req.user;
-  const { nombre, descripcion } = req.body;
+  const { nombre, descripcion, requisitos, inicia, finaliza, inversion } =
+    req.body;
   if (!profesor.id)
     return res
       .status(400)
@@ -81,6 +98,10 @@ async function createMateria(req = request, res = response) {
       nombre,
       descripcion,
       profesor: profesor.id,
+      requisitos,
+      inicia,
+      finaliza,
+      inversion,
     });
     res.status(201).json(materia);
   } catch (err) {
