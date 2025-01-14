@@ -15,6 +15,6 @@ router.get('/profesores', getProfesor)
 router.get('/profesores/self', rolAccess(['profesor', 'administrador']), getProfesorSelf)
 router.post('/profesores',rolAccess(['profesor', 'administrador']), createProfesor)
 router.put('/profesores', rolAccess(['profesor', 'administrador']), updateProfesores)
-router.put('/profesores', rolAccess(['profesor', 'administrador']), deleteProfesor)
+router.delete('/profesores', rolAccess(['profesor', 'administrador']), deleteProfesor)
 
 module.exports = router
