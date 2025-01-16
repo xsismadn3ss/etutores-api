@@ -6,6 +6,7 @@ const validatePermissions = require('../middlewares/rolHandler')
 // rutas comunes
 router.get('/materias/all', materiaController.getMaterias)
 router.get('/materias', materiaController.getMateria)
+router.get('/materias/search', materiaController.searchMateria)
 // rutas para administrador
 router.put('/materias',validatePermissions(['administrador']), materiaController.updateMateria)
 router.delete('/materias/:id',validatePermissions(['administrador']), materiaController.deleteMateria)

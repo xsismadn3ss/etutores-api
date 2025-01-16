@@ -1,5 +1,6 @@
 const { request, response } = require("express");
 const { Materia, profesor, Persona } = require("../models/");
+const { Op } = require("sequelize");
 
 async function getMaterias(req = request, res = response) {
   try {
@@ -75,6 +76,49 @@ async function getMateria(req = request, res = response) {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Error al obtener la materia" });
+  }
+}
+
+async function searchMateria(req = request, res = response) {
+  const { q } = req.query;
+  try {
+    const materias = await Materia.findAll({
+      where: {
+        activo: true,
+        nombre: {
+          [Op.like]: `%${q}%`,
+        },
+      },
+      attributes: [
+        "id",
+        "nombre",
+        "descripcion",
+        "requisitos",
+        "inversion",
+        "inicia",
+        "finaliza",
+      ],
+      include: [
+        {
+          model: profesor,
+          as: "owner",
+          attributes: ["id", "titulo", "especialidad", "biografia"],
+          include: [
+            {
+              model: Persona,
+              as: "persona",
+              attributes: ["id", "nombres", "apellidos", "usuario", "email"],
+            },
+          ],
+        },
+      ],
+    });
+    if (!materias || materias.length == 0)
+      return res.status(404).json({ message: "No se encontraron resultados" });
+    return res.status(200).json(materias)
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Ha ocurrido un error" });
   }
 }
 
@@ -254,4 +298,5 @@ module.exports = {
   getProfesorMaterias,
   updateProfesorMateria,
   deleProfesorMateria,
+  searchMateria,
 };
