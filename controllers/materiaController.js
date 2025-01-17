@@ -14,6 +14,7 @@ async function getMaterias(req = request, res = response) {
         "inversion",
         "inicia",
         "finaliza",
+        "profesor"
       ],
       include: [
         {

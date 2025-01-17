@@ -13,7 +13,7 @@ async function getProfesores(req = request, res = response) {
           attributes: [
             "id",
             "nombre",
-            "titulo",
+            "descripcion",
             "requisitos",
             "inversion",
             "inicia",
@@ -42,6 +42,7 @@ async function getProfesores(req = request, res = response) {
     }
     res.status(200).json(profesores);
   } catch (error) {
+    console.error(error)
     res.status(500).json({ message: "Error al obtener las materias" });
   }
 }
@@ -62,7 +63,7 @@ async function getProfesor(req = requeset, res = response) {
           attributes: [
             "id",
             "nombre",
-            "titulo",
+            "descripcion",
             "requisitos",
             "inversion",
             "inicia",

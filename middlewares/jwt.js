@@ -3,7 +3,8 @@ const jwt = require("../utils/jwt");
 
 async function validateToken(req = request, res = response, next) {
   const url = req.path;
-  if (url.includes("/login"|| url.includes("/logout"))) {
+  console.log(url)
+  if (url.includes("/login") || url.includes('/register/')) {
     await next();
   } else {
     const token = req.cookies["access-token"] || req.headers["access-token"];

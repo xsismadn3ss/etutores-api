@@ -1,6 +1,7 @@
 const express = require("express");
 const config = require("./appConfig");
 const cookieParser = require("cookie-parser");
+const cors = require("cors");
 // middlewares
 const notFoundHandler = require("./middlewares/notFound");
 const httpErrorHandler = require("./middlewares/httpError");
@@ -19,13 +20,19 @@ const profesores = require("./routes/profesores");
 
 const app = express();
 app.set("port", config.app.port);
+app.use(cors(config.cors));
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "http://localhost:5173"); // Origen permitido
+  res.header("Access-Control-Allow-Credentials", "true"); // Permitir credenciales
+  next();
+});
 app.use(express.json());
 app.use(cookieParser());
 
 // middleware para añadir logs de las endpoints
 app.use(logger);
 // añadir autenticaciones
-app.use("/api", validateToken);
+// app.use("/api", validateToken);
 
 // registrar rutas
 const base = config.app.base;

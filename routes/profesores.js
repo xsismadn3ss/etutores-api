@@ -8,13 +8,29 @@ const {
   updateProfesores,
   deleteProfesor,
 } = require("../controllers/profesorController");
-const rolAccess = require('../middlewares/rolHandler')
+// const rolAccess = require("../middlewares/rolHandler");
 
-router.get('/profesores/all', getProfesores)
-router.get('/profesores', getProfesor)
-router.get('/profesores/self', rolAccess(['profesor', 'administrador']), getProfesorSelf)
-router.post('/profesores',rolAccess(['profesor', 'administrador']), createProfesor)
-router.put('/profesores', rolAccess(['profesor', 'administrador']), updateProfesores)
-router.delete('/profesores', rolAccess(['profesor', 'administrador']), deleteProfesor)
+router.get("/profesores/all", getProfesores);
+router.get("/profesores", getProfesor);
+router.get(
+  "/profesores/self",
+  // rolAccess(["profesor", "administrador"]),
+  getProfesorSelf
+);
+router.post(
+  "/profesores",
+  // rolAccess(["profesor", "administrador"]),
+  createProfesor
+);
+router.put(
+  "/profesores",
+  // rolAccess(["profesor", "administrador"]),
+  updateProfesores
+);
+router.delete(
+  "/profesores",
+  // rolAccess(["profesor", "administrador"]),
+  deleteProfesor
+);
 
-module.exports = router
+module.exports = router;

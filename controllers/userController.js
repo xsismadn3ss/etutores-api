@@ -270,7 +270,7 @@ async function login(req = request, res = response) {
     res.cookie("access-token", accessToken, {
       maxAge: 64800,
       httpOnly: true,
-      path: "/api",
+      path: "/",
     });
     res.setHeader("access-token", accessToken);
 
